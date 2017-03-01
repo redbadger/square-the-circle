@@ -10,20 +10,21 @@ const fetchBuilds = (offset = 0) => {
   const batchSize = 30;
 
   return new Promise((resolve, reject) => {
-    fetchBatch(offset, batchSize, builds => {
-      if(moreBuilds(builds)) {
-        fetchBuilds(offset + batchSize)
-          .then((previousBuilds) => {
-            resolve(builds.concat(previousBuilds));
-          })
-      } else {
-        resolve(builds);
-      }
-    });
+    fetchBatch(offset, batchSize)
+      .then(builds => {
+        if(moreBuilds(builds)) {
+          fetchBuilds(offset + batchSize)
+            .then((previousBuilds) => {
+              resolve(builds.concat(previousBuilds));
+            })
+        } else {
+          resolve(builds);
+        }
+      });
   });
 }
 
-const fetchBatch = (offset, batchSize, callback) => {
+const fetchBatch = (offset, batchSize) => {
   const options = {
     method: 'GET',
     uri: endpoint,
@@ -34,9 +35,11 @@ const fetchBatch = (offset, batchSize, callback) => {
       offset: offset,
     }
   }
-  request(options, (err, response, builds) => {
-    callback(builds);
-  });
+  return new Promise(resolve => {
+    request(options, (err, response, builds) => {
+      resolve(builds);
+    });
+  })
 }
 
 const moreBuilds = builds => (
