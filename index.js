@@ -3,28 +3,9 @@
 const request = require('request');
 const moment = require('moment');
 
-const token = process.env.CIRCLECI_TOKEN;
-const endpoint = 'https://circleci.com/api/v1.1/project/github/redbadger/website-honestly';
-
-const fetchBuilds = (offset = 0) => {
-  const batchSize = 30;
-
-  return new Promise((resolve, reject) => {
-    fetchBatch(offset, batchSize)
-      .then(builds => {
-        if(moreBuilds(builds)) {
-          fetchBuilds(offset + batchSize)
-            .then((previousBuilds) => {
-              resolve(builds.concat(previousBuilds));
-            })
-        } else {
-          resolve(builds);
-        }
-      });
-  });
-}
-
-const fetchBatch = (offset, batchSize) => {
+const circleCIFetchBatch = (offset, batchSize) => {
+  const token = process.env.CIRCLECI_TOKEN;
+  const endpoint = 'https://circleci.com/api/v1.1/project/github/redbadger/website-honestly';
   const options = {
     method: 'GET',
     uri: endpoint,
@@ -40,6 +21,24 @@ const fetchBatch = (offset, batchSize) => {
       resolve(builds);
     });
   })
+}
+
+const fetchBuilds = (offset = 0, fetchBatch = circleCIFetchBatch) => {
+  const batchSize = 30;
+
+  return new Promise((resolve, reject) => {
+    fetchBatch(offset, batchSize)
+      .then(builds => {
+        if(moreBuilds(builds)) {
+          fetchBuilds(offset + batchSize)
+            .then((previousBuilds) => {
+              resolve(builds.concat(previousBuilds));
+            })
+        } else {
+          resolve(builds);
+        }
+      });
+  });
 }
 
 const moreBuilds = builds => (
