@@ -6,8 +6,24 @@ const moment = require('moment');
 const token = process.env.CIRCLECI_TOKEN;
 const endpoint = 'https://circleci.com/api/v1.1/project/github/redbadger/website-honestly';
 
-function fetchBuilds(offset = 0) {
+const fetchBuilds = (offset = 0) => {
   const batchSize = 30;
+
+  return new Promise((resolve, reject) => {
+    fetchBatch(offset, batchSize, builds => {
+      if(moreBuilds(builds)) {
+        fetchBuilds(offset + batchSize)
+          .then((previousBuilds) => {
+            resolve(builds.concat(previousBuilds));
+          })
+      } else {
+        resolve(builds);
+      }
+    });
+  });
+}
+
+const fetchBatch = (offset, batchSize, callback) => {
   const options = {
     method: 'GET',
     uri: endpoint,
@@ -18,17 +34,8 @@ function fetchBuilds(offset = 0) {
       offset: offset,
     }
   }
-  return new Promise((resolve, reject) => {
-    request(options, (err, response, builds) => {
-      if(moreBuilds(builds)) {
-        fetchBuilds(offset + batchSize)
-          .then((previousBuilds) => {
-            resolve(builds.concat(previousBuilds));
-          })
-      } else {
-        resolve(builds);
-      }
-    });
+  request(options, (err, response, builds) => {
+    callback(builds);
   });
 }
 
