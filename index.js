@@ -19,29 +19,24 @@ function fetchBuilds(offset = 0) {
     }
   }
   return new Promise((resolve, reject) => {
-    request(options, (err, response, body) => {
-      if(startedWeekAgo(body)) {
+    request(options, (err, response, builds) => {
+      if(moreBuilds(builds)) {
         fetchBuilds(offset + batchSize)
-          .then((previousBody) => {
-            resolve(body.concat(previousBody));
+          .then((previousBuilds) => {
+            resolve(builds.concat(previousBuilds));
           })
       } else {
-        resolve(body);
+        resolve(builds);
       }
     });
   });
 }
 
-function startedWeekAgo(builds) {
-  if (builds && builds.length !== 0) {
-    const startTime = moment(builds[builds.length - 1]['start_time']);
-    const weekAgo = moment().subtract(1, 'w');
-    return startTime > weekAgo;
-  }
-  return false;
-}
+const moreBuilds = builds => (
+  builds.filter(build => moment(build.start_time) < moment().subtract(1, 'w')).length === 0
+)
 
-fetchBatch()
-  .then((builds) => {
+fetchBuilds()
+  .then(builds => {
     builds.map(build => { console.log(build.start_time) });
   });
