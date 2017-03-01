@@ -6,28 +6,27 @@ const moment = require('moment');
 const token = process.env.CIRCLECI_TOKEN;
 const endpoint = 'https://circleci.com/api/v1.1/project/github/redbadger/website-honestly';
 
-function fetchBatch(offset, builds) {
-  const limit = 3;
+function fetchBuilds(offset = 0) {
+  const batchSize = 30;
   const options = {
     method: 'GET',
     uri: endpoint,
     json: true,
     qs: {
       'circle-token': token,
-      limit: limit,
+      limit: batchSize,
       offset: offset,
     }
   }
   return new Promise((resolve, reject) => {
     request(options, (err, response, body) => {
-      builds.push(...body);
       if(startedWeekAgo(body)) {
-        fetchBatch(offset + limit, builds)
-          .then(() => {
-            resolve();
+        fetchBuilds(offset + batchSize)
+          .then((previousBody) => {
+            resolve(body.concat(previousBody));
           })
       } else {
-        resolve();
+        resolve(body);
       }
     });
   });
@@ -42,8 +41,7 @@ function startedWeekAgo(builds) {
   return false;
 }
 
-const builds = [];
-fetchBatch(0, builds) //TODO: refactor offset starting value
-  .then(() => {
+fetchBatch()
+  .then((builds) => {
     builds.map(build => { console.log(build.start_time) });
   });
