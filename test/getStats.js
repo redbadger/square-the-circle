@@ -1,6 +1,5 @@
-const moment = require('moment');
 const assert = require('assert');
-const getStats = require('../index').getStats;
+const getStats = require('../getStats');
 
 describe('getStats', () => {
   describe('whene there is no data', () => {
