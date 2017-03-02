@@ -13,14 +13,14 @@ describe('getStats', () => {
         .catch(done);
     })
   });
-  describe('when the last element of the first batch is older than given date', () => {
-    it('should return two builds', done => {
+  describe('when the last element of the first batch is older than a given date', () => {
+    it('should return 2 builds', done => {
       const builds = [
         { 'start_time': '2017-03-02T10:18:33.094Z' },
         { 'start_time': '2017-03-02T10:18:33.094Z' },
         { 'start_time': '2017-02-02T10:18:33.094Z' },
       ];
-      const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve(builds))
+      const fetchBatch = offset => new Promise(resolve => resolve(builds))
       getStats(fetchBatch, new Date('2017-03-01'))
         .then(builds => assert.equal(builds.length, 2) )
         .then(done)
@@ -31,7 +31,8 @@ describe('getStats', () => {
   describe('when the last element of the first batch is younger than a given date', () => {
     describe('and the last element of the second batch is younger than a given date', () => {
       describe('and the last element of the third batch is older than given date', () => {
-        it('should return 11 builds', done => {
+        it('should return 8 builds', done => {
+          const batchSize = 3;
           const builds = [
             { 'start_time': '2017-03-02T10:18:33.094Z' },
             { 'start_time': '2017-03-02T10:18:33.094Z' },
@@ -43,7 +44,7 @@ describe('getStats', () => {
             { 'start_time': '2017-03-02T10:18:33.094Z' },
             { 'start_time': '2017-02-02T10:18:33.094Z' },
           ];
-          const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
+          const fetchBatch = offset => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
           getStats(fetchBatch, new Date('2017-03-01'))
             .then(builds => assert.equal(builds.length, 8) )
             .then(done)
@@ -53,6 +54,7 @@ describe('getStats', () => {
     })
     describe('and the last element of the second batch is older than given date', () => {
       it('should return 5 builds', done => {
+        const batchSize = 3;
         const builds = [
           { 'start_time': '2017-03-02T10:18:33.094Z' },
           { 'start_time': '2017-03-02T10:18:33.094Z' },
@@ -61,7 +63,7 @@ describe('getStats', () => {
           { 'start_time': '2017-03-02T10:18:33.094Z' },
           { 'start_time': '2017-02-02T10:18:33.094Z' },
         ];
-        const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
+        const fetchBatch = offset => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
         getStats(fetchBatch, new Date('2017-03-01'))
           .then(builds => assert.equal(builds.length, 5) )
           .then(done)
@@ -70,12 +72,13 @@ describe('getStats', () => {
     });
     describe('and there is no more data', () => {
       it('should return 3 builds', done => {
+        const batchSize = 3;
         const builds = [
           { 'start_time': '2017-03-02T10:18:33.094Z' },
           { 'start_time': '2017-03-02T10:18:33.094Z' },
           { 'start_time': '2017-03-02T10:18:33.094Z' },
         ];
-        const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
+        const fetchBatch = offset => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
         getStats(fetchBatch, new Date('2017-03-01'))
           .then(builds => assert.equal(builds.length, 3) )
           .then(done)
