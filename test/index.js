@@ -14,11 +14,7 @@ describe('getStats', () => {
         'start_time': '2017-02-02T10:18:33.094Z',
       },
     ];
-    const fetchBatch = (offset, batchSize) => {
-      return new Promise(resolve => {
-        resolve(builds);
-      })
-    }
+    const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve(builds))
     getStats(fetchBatch)
       .then(builds => assert.equal(builds.length, 2) )
       .then(done)
