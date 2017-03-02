@@ -16,13 +16,22 @@ describe('getStats', () => {
   describe('when the last element of the first batch is older than a given date', () => {
     it('should return 2 builds', done => {
       const builds = [
-        { 'start_time': '2017-03-02T10:18:33.094Z' },
-        { 'start_time': '2017-03-02T10:18:33.094Z' },
-        { 'start_time': '2017-02-02T10:18:33.094Z' },
+        {
+          'start_time': '2017-03-02T10:18:33.094Z',
+          'status': 'success',
+        },
+        {
+          'start_time': '2017-03-02T10:18:33.094Z',
+          'status': 'failed',
+        },
+        {
+          'start_time': '2017-02-02T10:18:33.094Z',
+          'status': 'success',
+        },
       ];
       const fetchBatch = offset => new Promise(resolve => resolve({ builds }))
       getStats(fetchBatch, new Date('2017-03-01'))
-        .then(builds => assert.equal(builds.length, 2) )
+        .then(stats => assert.equal(stats.failedBuildsPercentage, 50))
         .then(done)
         .catch(done);
     });

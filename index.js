@@ -42,7 +42,12 @@ const fetchBuilds = (offset, fetchBatch, fromDate) => {
 const shouldFetchMore = (builds, fromDate) => builds.length !==0 && recentBuilds(builds, fromDate).length === builds.length;
 const recentBuilds = (builds, fromDate) => builds.filter(build => new Date(build.start_time) > fromDate);
 
+const getFailedBuildsPercentage = builds => builds.filter(build => build.status === 'failed').length / builds.length * 100;
+
 module.exports.getStats = (fetchBatch, fromDate) => (
   fetchBuilds(0, fetchBatch, fromDate)
   .then(builds => recentBuilds(builds, fromDate))
+  .then(builds => ({ failedBuildsPercentage: getFailedBuildsPercentage(builds) }))
+  // .then(({ builds, ...stats }) => { ...stats, codeDeploymentCount: getCodeDeploymentCount(builds) })
+  // .then(({ builds, ...stats }) => { ...stats, averageBuildTime: getAverageBuildTime(builds) });
 )
