@@ -28,6 +28,3 @@ exports.handler = (event, context, callback) => {
   getStats(circleCIFetchBatch, new Date('2017-03-01'))
     .then(stats => { console.log(stats) });
 }
-
-getStats(circleCIFetchBatch, new Date('2017-01-01'))
-  .then(stats => { console.log(stats) });
