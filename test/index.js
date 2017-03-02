@@ -6,7 +6,7 @@ describe('getStats', () => {
   describe('whene there is no data', () => {
     it('should return 0 builds', done => {
       const builds = [];
-      const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve(builds))
+      const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve({ builds }))
       getStats(fetchBatch, new Date('2017-03-01'))
         .then(builds => assert.equal(builds.length, 0) )
         .then(done)
@@ -20,7 +20,7 @@ describe('getStats', () => {
         { 'start_time': '2017-03-02T10:18:33.094Z' },
         { 'start_time': '2017-02-02T10:18:33.094Z' },
       ];
-      const fetchBatch = offset => new Promise(resolve => resolve(builds))
+      const fetchBatch = offset => new Promise(resolve => resolve({ builds }))
       getStats(fetchBatch, new Date('2017-03-01'))
         .then(builds => assert.equal(builds.length, 2) )
         .then(done)
@@ -44,7 +44,7 @@ describe('getStats', () => {
             { 'start_time': '2017-03-02T10:18:33.094Z' },
             { 'start_time': '2017-02-02T10:18:33.094Z' },
           ];
-          const fetchBatch = offset => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
+          const fetchBatch = offset => new Promise(resolve => resolve({ builds: builds.slice(offset, offset + batchSize), nextLimit: offset + batchSize }));
           getStats(fetchBatch, new Date('2017-03-01'))
             .then(builds => assert.equal(builds.length, 8) )
             .then(done)
@@ -63,7 +63,7 @@ describe('getStats', () => {
           { 'start_time': '2017-03-02T10:18:33.094Z' },
           { 'start_time': '2017-02-02T10:18:33.094Z' },
         ];
-        const fetchBatch = offset => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
+        const fetchBatch = offset => new Promise(resolve => resolve({ builds: builds.slice(offset, offset + batchSize), nextLimit: offset + batchSize }));
         getStats(fetchBatch, new Date('2017-03-01'))
           .then(builds => assert.equal(builds.length, 5) )
           .then(done)
@@ -78,7 +78,7 @@ describe('getStats', () => {
           { 'start_time': '2017-03-02T10:18:33.094Z' },
           { 'start_time': '2017-03-02T10:18:33.094Z' },
         ];
-        const fetchBatch = offset => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
+        const fetchBatch = offset => new Promise(resolve => resolve({ builds: builds.slice(offset, batchSize), nextLimit: batchSize }));
         getStats(fetchBatch, new Date('2017-03-01'))
           .then(builds => assert.equal(builds.length, 3) )
           .then(done)

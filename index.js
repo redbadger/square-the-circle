@@ -2,9 +2,10 @@
 
 const request = require('request');
 
-const circleCIFetchBatch = (offset, batchSize) => {
+const circleCIFetchBatch = (offset) => {
   const token = process.env.CIRCLECI_TOKEN;
   const endpoint = 'https://circleci.com/api/v1.1/project/github/redbadger/website-honestly';
+  const batchSize = 3;
   const options = {
     method: 'GET',
     uri: endpoint,
@@ -17,20 +18,18 @@ const circleCIFetchBatch = (offset, batchSize) => {
   }
   return new Promise(resolve => {
     request(options, (err, response, builds) => {
-      resolve(builds);
+      resolve({ builds, nextLimit: offset + batchSize });
     });
   })
 }
 
 const fetchBuilds = (offset, fetchBatch, fromDate) => {
-  const batchSize = 3;
-
   return new Promise((resolve, reject) => {
-    fetchBatch(offset, batchSize)
-      .then(builds => {
+    fetchBatch(offset)
+      .then(({ builds, nextLimit }) => {
         if(fetchMore(builds, fromDate)) {
-          fetchBuilds(offset + batchSize, fetchBatch)
-            .then((previousBuilds) => {
+          fetchBuilds(nextLimit, fetchBatch)
+            .then(previousBuilds => {
               resolve(builds.concat(previousBuilds));
             })
         } else {
