@@ -23,14 +23,14 @@ const circleCIFetchBatch = (offset, batchSize) => {
   })
 }
 
-const fetchBuilds = (offset = 0, fetchBatch = circleCIFetchBatch) => {
+const fetchBuilds = (offset, fetchBatch) => {
   const batchSize = 30;
 
   return new Promise((resolve, reject) => {
     fetchBatch(offset, batchSize)
       .then(builds => {
         if(moreBuilds(builds)) {
-          fetchBuilds(offset + batchSize)
+          fetchBuilds(offset + batchSize, fetchBatch)
             .then((previousBuilds) => {
               resolve(builds.concat(previousBuilds));
             })
@@ -45,7 +45,7 @@ const moreBuilds = builds => (
   builds.filter(build => moment(build.start_time) < moment().subtract(1, 'w')).length === 0
 )
 
-fetchBuilds()
-  .then(builds => {
-    builds.map(build => { console.log(build.start_time) });
-  });
+module.exports.getStats = (fetchBatch) => (
+  fetchBuilds(0, fetchBatch)
+  .then(builds => builds.filter(build => moment(build.start_time) > moment().subtract(1, 'w')))
+)
