@@ -29,7 +29,7 @@ const fetchBuilds = (offset, fetchBatch) => {
   return new Promise((resolve, reject) => {
     fetchBatch(offset, batchSize)
       .then(builds => {
-        if(moreBuilds(builds)) {
+        if(moreBuilds(builds, batchSize)) {
           fetchBuilds(offset + batchSize, fetchBatch)
             .then((previousBuilds) => {
               resolve(builds.concat(previousBuilds));
@@ -41,8 +41,8 @@ const fetchBuilds = (offset, fetchBatch) => {
   });
 }
 
-const moreBuilds = builds => (
-  builds.filter(build => moment(build.start_time) < moment().subtract(1, 'w')).length === 0
+const moreBuilds = (builds, batchSize) => (
+  builds.filter(build => moment(build.start_time) > moment().subtract(1, 'w')).length === batchSize
 )
 
 module.exports.getStats = (fetchBatch) => (
