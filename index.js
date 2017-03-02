@@ -24,7 +24,7 @@ const circleCIFetchBatch = (offset, batchSize) => {
 }
 
 const fetchBuilds = (offset, fetchBatch) => {
-  const batchSize = 30;
+  const batchSize = 3;
 
   return new Promise((resolve, reject) => {
     fetchBatch(offset, batchSize)
