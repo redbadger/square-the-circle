@@ -14,7 +14,7 @@ describe('getStats', () => {
     })
   });
   describe('when the last element of the first batch is older than a given date', () => {
-    it('should return 2 builds', done => {
+    it('should return corrects stats', done => {
       const builds = [
         {
           'start_time': '2017-03-02T10:18:33.094Z',
@@ -43,19 +43,46 @@ describe('getStats', () => {
         it('should return 8 builds', done => {
           const batchSize = 3;
           const builds = [
-            { 'start_time': '2017-03-02T10:18:33.094Z' },
-            { 'start_time': '2017-03-02T10:18:33.094Z' },
-            { 'start_time': '2017-03-02T10:18:33.094Z' },
-            { 'start_time': '2017-03-02T10:18:33.094Z' },
-            { 'start_time': '2017-03-02T10:18:33.094Z' },
-            { 'start_time': '2017-03-02T10:18:33.094Z' },
-            { 'start_time': '2017-03-02T10:18:33.094Z' },
-            { 'start_time': '2017-03-02T10:18:33.094Z' },
-            { 'start_time': '2017-02-02T10:18:33.094Z' },
+            {
+              'start_time': '2017-03-02T10:18:33.094Z',
+              'status': 'success',
+            },
+            {
+              'start_time': '2017-03-02T10:18:33.094Z',
+              'status': 'success',
+            },
+            {
+              'start_time': '2017-03-02T10:18:33.094Z',
+              'status': 'success',
+            },
+            {
+              'start_time': '2017-03-02T10:18:33.094Z',
+              'status': 'success',
+            },
+            {
+              'start_time': '2017-03-02T10:18:33.094Z',
+              'status': 'fixed',
+            },
+            {
+              'start_time': '2017-03-02T10:18:33.094Z',
+              'status': 'failed',
+            },
+            {
+              'start_time': '2017-03-02T10:18:33.094Z',
+              'status': 'failed',
+            },
+            {
+              'start_time': '2017-03-02T10:18:33.094Z',
+              'status': 'fixed',
+            },
+            {
+              'start_time': '2017-02-02T10:18:33.094Z',
+              'status': 'success',
+            },
           ];
           const fetchBatch = offset => new Promise(resolve => resolve({ builds: builds.slice(offset, offset + batchSize), nextLimit: offset + batchSize }));
           getStats(fetchBatch, new Date('2017-03-01'))
-            .then(builds => assert.equal(builds.length, 8) )
+            .then(stats => assert.equal(stats.failedBuildsPercentage, 25))
             .then(done)
             .catch(done);
         });
