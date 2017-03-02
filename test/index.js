@@ -1,3 +1,4 @@
+const moment = require('moment');
 const assert = require('assert');
 const getStats = require('../index').getStats;
 
@@ -6,13 +7,13 @@ describe('getStats', () => {
     it('should return 0 builds', done => {
       const builds = [];
       const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve(builds))
-      getStats(fetchBatch)
+      getStats(fetchBatch, new Date('2017-03-01'))
         .then(builds => assert.equal(builds.length, 0) )
         .then(done)
         .catch(done);
     })
   });
-  describe('when the last element of the first batch is older than week ago', () => {
+  describe('when the last element of the first batch is older than given date', () => {
     it('should return two builds', done => {
       const builds = [
         { 'start_time': '2017-03-02T10:18:33.094Z' },
@@ -20,15 +21,15 @@ describe('getStats', () => {
         { 'start_time': '2017-02-02T10:18:33.094Z' },
       ];
       const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve(builds))
-      getStats(fetchBatch)
+      getStats(fetchBatch, new Date('2017-03-01'))
         .then(builds => assert.equal(builds.length, 2) )
         .then(done)
         .catch(done);
     });
   });
 
-  describe('when the last element of the first batch is younger than week ago', () => {
-    describe('and the last element of the second batch is older than week ago', () => {
+  describe('when the last element of the first batch is younger than given date', () => {
+    describe('and the last element of the second batch is older than given date', () => {
       it('should return 5 builds', done => {
         const builds = [
           { 'start_time': '2017-03-02T10:18:33.094Z' },
@@ -39,7 +40,7 @@ describe('getStats', () => {
           { 'start_time': '2017-02-02T10:18:33.094Z' },
         ];
         const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
-        getStats(fetchBatch)
+        getStats(fetchBatch, new Date('2017-03-01'))
           .then(builds => assert.equal(builds.length, 5) )
           .then(done)
           .catch(done);
@@ -53,7 +54,7 @@ describe('getStats', () => {
           { 'start_time': '2017-03-02T10:18:33.094Z' },
         ];
         const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve(builds.slice(offset, offset + batchSize)));
-        getStats(fetchBatch)
+        getStats(fetchBatch, new Date('2017-03-01'))
           .then(builds => assert.equal(builds.length, 3) )
           .then(done)
           .catch(done);

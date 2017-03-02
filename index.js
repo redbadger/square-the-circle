@@ -1,7 +1,6 @@
 'use strict';
 
 const request = require('request');
-const moment = require('moment');
 
 const circleCIFetchBatch = (offset, batchSize) => {
   const token = process.env.CIRCLECI_TOKEN;
@@ -23,13 +22,13 @@ const circleCIFetchBatch = (offset, batchSize) => {
   })
 }
 
-const fetchBuilds = (offset, fetchBatch) => {
+const fetchBuilds = (offset, fetchBatch, fromDate) => {
   const batchSize = 3;
 
   return new Promise((resolve, reject) => {
     fetchBatch(offset, batchSize)
       .then(builds => {
-        if(moreBuilds(builds, batchSize)) {
+        if(moreBuilds(builds, batchSize, fromDate)) {
           fetchBuilds(offset + batchSize, fetchBatch)
             .then((previousBuilds) => {
               resolve(builds.concat(previousBuilds));
@@ -41,11 +40,11 @@ const fetchBuilds = (offset, fetchBatch) => {
   });
 }
 
-const moreBuilds = (builds, batchSize) => (
-  builds.filter(build => moment(build.start_time) > moment().subtract(1, 'w')).length === batchSize
+const moreBuilds = (builds, batchSize, fromDate) => (
+  builds.filter(build => new Date(build.start_time) > fromDate).length === batchSize
 )
 
-module.exports.getStats = (fetchBatch) => (
-  fetchBuilds(0, fetchBatch)
-  .then(builds => builds.filter(build => moment(build.start_time) > moment().subtract(1, 'w')))
+module.exports.getStats = (fetchBatch, fromDate) => (
+  fetchBuilds(0, fetchBatch, fromDate)
+  .then(builds => builds.filter(build => new Date(build.start_time) > fromDate))
 )
