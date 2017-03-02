@@ -44,7 +44,7 @@ const recentBuilds = (builds, fromDate) => builds.filter(build => new Date(build
 
 const getFailedBuildsPercentage = builds => builds.filter(build => build.status === 'failed').length / (builds.length || 1) * 100;
 const getAverageBuildTime = builds => builds.reduce((totalTime, build) => totalTime += build.build_time_millis , 0) / (builds.length || 1);
-const getCodeDeploymentCount = builds => builds.filter(build => build.build_parameters && build.build_parameters.PRODUCTION && build.status !== 'failed');
+const getCodeDeploymentCount = builds => builds.filter(build => build.build_parameters && build.build_parameters.PRODUCTION && build.status !== 'failed').length;
 
 module.exports.getStats = (fetchBatch, fromDate) => (
   fetchBuilds(0, fetchBatch, fromDate)
