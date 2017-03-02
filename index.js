@@ -27,8 +27,8 @@ const fetchBuilds = (offset, fetchBatch, fromDate) => {
   return new Promise((resolve, reject) => {
     fetchBatch(offset)
       .then(({ builds, nextLimit }) => {
-        if(fetchMore(builds, fromDate)) {
-          fetchBuilds(nextLimit, fetchBatch)
+        if(shouldFetchMore(builds, fromDate)) {
+          fetchBuilds(nextLimit, fetchBatch, fromDate)
             .then(previousBuilds => {
               resolve(builds.concat(previousBuilds));
             })
@@ -39,11 +39,10 @@ const fetchBuilds = (offset, fetchBatch, fromDate) => {
   });
 }
 
-const fetchMore = (builds, fromDate) => (
-  builds.length !==0 && builds.filter(build => new Date(build.start_time) < fromDate).length === 0
-)
+const shouldFetchMore = (builds, fromDate) => builds.length !==0 && recentBuilds(builds, fromDate).length === builds.length;
+const recentBuilds = (builds, fromDate) => builds.filter(build => new Date(build.start_time) > fromDate);
 
 module.exports.getStats = (fetchBatch, fromDate) => (
   fetchBuilds(0, fetchBatch, fromDate)
-  .then(builds => builds.filter(build => new Date(build.start_time) > fromDate))
+  .then(builds => recentBuilds(builds, fromDate))
 )
