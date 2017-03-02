@@ -7,7 +7,7 @@ describe('getStats', () => {
       const builds = [];
       const fetchBatch = (offset, batchSize) => new Promise(resolve => resolve({ builds }))
       getStats(fetchBatch, new Date('2017-03-01'))
-        .then(stats => assert.equal(stats.failedBuildsPercentage, 0) )
+        .then(stats => assert.equal(stats.failedBuildsPercentage, 0))
         .then(done)
         .catch(done);
     })
