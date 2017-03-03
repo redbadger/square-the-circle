@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const fetchBuilds = (offset, fetchBatch, fromDate) => {
   return new Promise((resolve, reject) => {
@@ -53,20 +53,9 @@ const isSuccessfulDeployment = build => (
 module.exports = (fetchBatch, fromDate) => (
   fetchBuilds(0, fetchBatch, fromDate)
   .then(builds => recentBuilds(builds, fromDate))
-  .then(builds => (
-    ({ failedBuildsPercentage: getFailedBuildsPercentage(builds), builds })
-  ))
-  .then(({ builds, ...stats }) => (
-    ({
-      ...stats,
-      codeDeploymentCount: getCodeDeploymentCount(builds),
-      builds,
-    })
-  ))
-  .then(({ builds, ...stats }) => (
-    ({
-      ...stats,
-      averageBuildTime: getAverageBuildTime(builds)
-    })
-  ))
+  .then(builds => ({
+    failedBuildsPercentage: getFailedBuildsPercentage(builds),
+    codeDeploymentCount: getCodeDeploymentCount(builds),
+    averageBuildTime: getAverageBuildTime(builds),
+  }))
 );
