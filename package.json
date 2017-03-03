@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "deploy": "sls deploy"
   },
   "author": "",
   "license": "ISC",
@@ -12,8 +13,10 @@
     "request": "^2.79.0"
   },
   "devDependencies": {
+    "babel-preset-es2016": "^6.22.0",
     "mocha": "^3.2.0",
     "moment": "^2.17.1",
-    "serverless": "^1.8.0"
+    "serverless": "^1.8.0",
+    "serverless-babel-plugin": "^0.1.3"
   }
 }

@@ -4,8 +4,15 @@ provider:
   name: aws
   runtime: nodejs4.3
 
+plugins:
+  - serverless-babel-plugin
+
+custom:
+  babelPresets:
+    - es2016
+
 functions:
   stats:
     handler: index.handler
     events:
-      - schedule: rate(1 minutes)
+      - schedule: rate(1 minute)
