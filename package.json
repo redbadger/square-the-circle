@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "mocha": "^3.2.0",
-    "moment": "^2.17.1"
+    "moment": "^2.17.1",
+    "serverless": "^1.8.0"
   }
 }

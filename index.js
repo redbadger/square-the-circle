@@ -50,7 +50,7 @@ const sendToSlack = weekAgo => stats => {
   request(options);
 }
 
-exports.handler = (event, context, callback) => {
+module.exports.handler = (event, context) => {
   const weekAgo = new Date(new Date().setDate(new Date().getDate() - 7));
   getStats(circleCIFetchBatch, weekAgo)
     .then(sendToSlack(weekAgo));

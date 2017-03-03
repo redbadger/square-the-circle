@@ -1,0 +1,11 @@
+service: square-the-circle
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+
+functions:
+  stats:
+    handler: index.handler
+    events:
+      - schedule: rate(1 minutes)
