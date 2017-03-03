@@ -35,7 +35,8 @@ const formatTime = millis => {
 
 const sendToSlack = weekAgo => stats => {
   const report = `
-*Report from*: _${weekAgo.toLocaleDateString()}_ to: _${new Date().toLocaleDateString()}_
+*website-honestly builds report*
+*from* _${weekAgo.toLocaleDateString()}_ *to* _${new Date().toLocaleDateString()}_
 *Failed builds*: ${stats.failedBuildsPercentage.toFixed(2)}%
 *Code deployments*: ${stats.codeDeploymentCount}
 *Average build time*: ${formatTime(stats.averageBuildTime)}
