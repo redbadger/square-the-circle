@@ -26,11 +26,12 @@ const circleCIFetchBatch = (offset) => {
   })
 }
 
-const sendToSlack = stats => {
+const sendToSlack = weekAgo => stats => {
   const report = `
-Failed builds: ${stats.failedBuildsPercentage}%
-Code deployments: ${stats.codeDeploymentCount}
-Average build time: ${stats.averageBuildTime}ms
+*Report from*: _${weekAgo.toLocaleDateString()}_ to: _${new Date().toLocaleDateString()}_
+*Failed builds*: ${stats.failedBuildsPercentage}%
+*Code deployments*: ${stats.codeDeploymentCount}
+*Average build time*: ${stats.averageBuildTime}ms
 `
   const options = {
     method: 'POST',
@@ -43,10 +44,7 @@ Average build time: ${stats.averageBuildTime}ms
 }
 
 exports.handler = (event, context, callback) => {
-  getStats(circleCIFetchBatch, new Date('2017-03-01'))
-    .then(stats => { console.log(stats) });
+  const weekAgo = new Date(new Date().setDate(new Date().getDate() - 7));
+  getStats(circleCIFetchBatch, weekAgo)
+    .then(sendToSlack);
 }
-
-
-getStats(circleCIFetchBatch, new Date('2017-02-01'))
-  .then(sendToSlack);
