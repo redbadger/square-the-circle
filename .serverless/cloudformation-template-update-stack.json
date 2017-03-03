@@ -8,7 +8,7 @@
     "StatsLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/square-the-circle-production-stats"
+        "LogGroupName": "/aws/lambda/square-the-circle-dev-stats"
       }
     },
     "IamRoleLambdaExecution": {
@@ -36,7 +36,7 @@
               "Fn::Join": [
                 "-",
                 [
-                  "production",
+                  "dev",
                   "square-the-circle",
                   "lambda"
                 ]
@@ -91,7 +91,7 @@
             "-",
             [
               "square-the-circle",
-              "production",
+              "dev",
               "us-east-1",
               "lambdaRole"
             ]
@@ -106,10 +106,10 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/square-the-circle/production/1488548159960-2017-03-03T13:35:59.960Z/square-the-circle.zip"
+          "S3Key": "serverless/square-the-circle/dev/1488554081898-2017-03-03T15:14:41.898Z/square-the-circle.zip"
         },
-        "FunctionName": "square-the-circle-production-stats",
-        "Handler": "index.handler",
+        "FunctionName": "square-the-circle-dev-stats",
+        "Handler": "dist/index.handler",
         "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
@@ -124,20 +124,20 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "StatsLambdaVersione9gf5YpmeGG0aBTklv5BjopcVA4rGfDKR7PQhE7FeM": {
+    "StatsLambdaVersionAQoeSF6iqKNF9QYDI4CYeqKVCSrAs4JtMowavPKUA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "StatsLambdaFunction"
         },
-        "CodeSha256": "e9gf5YpmeGG0aBTkl+v5BjopcVA4rGfDKR7PQhE7FeM="
+        "CodeSha256": "AQoeSF6iqKNF9QYDI4CYeqKVCS+rAs4JtMowavP/KUA="
       }
     },
     "StatsEventsRuleSchedule1": {
       "Type": "AWS::Events::Rule",
       "Properties": {
-        "ScheduleExpression": "rate(1 minute)",
+        "ScheduleExpression": "cron(0 9 ? * 1 *)",
         "State": "ENABLED",
         "Targets": [
           {
@@ -181,7 +181,7 @@
     "StatsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "StatsLambdaVersione9gf5YpmeGG0aBTklv5BjopcVA4rGfDKR7PQhE7FeM"
+        "Ref": "StatsLambdaVersionAQoeSF6iqKNF9QYDI4CYeqKVCSrAs4JtMowavPKUA"
       }
     }
   }

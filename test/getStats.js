@@ -1,5 +1,5 @@
 const assert = require('assert');
-const getStats = require('../getStats');
+const getStats = require('../src/getStats');
 
 describe('getStats', () => {
   describe('whene there is no data', () => {

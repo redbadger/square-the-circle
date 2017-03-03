@@ -6,6 +6,6 @@ provider:
 
 functions:
   stats:
-    handler: index.handler
+    handler: dist/index.handler
     events:
-      - schedule: rate(1 minute)
+      - schedule: cron(0 9 ? * 1 *)
