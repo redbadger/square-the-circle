@@ -1,20 +1,18 @@
 'use strict'
 
 const request = require('request');
+const config = require('./config');
 const getStats = require('./getStats');
 
-const circleCItoken = process.env.CIRCLECI_TOKEN;
-const slackEndpoint = process.env.SLACK_ENDPOINT;
-
 const circleCIFetchBatch = (offset) => {
-  const endpoint = 'https://circleci.com/api/v1.1/project/github/redbadger/website-honestly';
+  const endpoint = `https://circleci.com/api/v1.1/project/github/${config.organisationName}/${config.projectName}`;
   const batchSize = 30;
   const options = {
     method: 'GET',
     uri: endpoint,
     json: true,
     qs: {
-      'circle-token': circleCItoken,
+      'circle-token': config.circleCItoken,
       limit: batchSize,
       offset: offset,
     }
@@ -35,7 +33,7 @@ const formatTime = millis => {
 
 const sendToSlack = weekAgo => stats => {
   const report = `
-*website-honestly builds report*
+*${config.projectName} CircleCI builds report*
 *from* _${weekAgo.toLocaleDateString()}_ *to* _${new Date().toLocaleDateString()}_
 *Failed builds*: ${stats.failedBuildsPercentage.toFixed(2)}%
 *Code deployments*: ${stats.codeDeploymentCount}
@@ -43,7 +41,7 @@ const sendToSlack = weekAgo => stats => {
 `
   const options = {
     method: 'POST',
-    uri: slackEndpoint,
+    uri: config.slackEndpoint,
     json: {
       'text': report
     }
@@ -52,7 +50,7 @@ const sendToSlack = weekAgo => stats => {
 }
 
 module.exports.handler = (event, context) => {
-  const weekAgo = new Date(new Date().setDate(new Date().getDate() - 7));
-  getStats(circleCIFetchBatch, weekAgo)
-    .then(sendToSlack(weekAgo));
+  const fromDate = new Date(new Date().setDate(new Date().getDate() - config.timeSpan));
+  getStats(circleCIFetchBatch, fromDate)
+    .then(sendToSlack(fromDate));
 }

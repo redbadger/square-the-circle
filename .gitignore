@@ -62,3 +62,6 @@ typings/
 
 # dist files
 dist
+
+# configuration file
+config.js
