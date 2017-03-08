@@ -47,7 +47,7 @@ const totalBuildTime = builds => (
 const isSuccessfulDeployment = build => (
   build.build_parameters &&
   build.build_parameters.PRODUCTION &&
-  build.status !== 'failed'
+  build.status !== 'failed' && build.status !== 'canceled'
 );
 
 module.exports = (fetchBatch, fromDate) => (
