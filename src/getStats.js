@@ -37,7 +37,7 @@ const getCodeDeploymentCount = builds => (
 );
 
 const failedBuilds = builds => (
-  builds.filter(build => build.status === 'failed')
+  builds.filter(({ status }) => status === 'failed' || status === 'canceled')
 );
 
 const totalBuildTime = builds => (

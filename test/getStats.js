@@ -85,7 +85,7 @@ describe('getStats', () => {
             },
             {
               'start_time': '2017-03-02T10:18:33.094Z',
-              'status': 'failed',
+              'status': 'canceled',
               'build_time_millis': 10,
             },
             {
