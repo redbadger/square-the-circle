@@ -25,10 +25,8 @@ const circleCIFetchBatch = (offset) => {
 }
 
 const formatTime = millis => {
-  const seconds = (millis / 1000) % 60;
-  const minutes = (millis / (1000 * 60)) % 60;
-
-  return `${Math.floor(minutes)}:${Math.floor(seconds)}`
+  const d = new Date(millis);
+  return `${d.getUTCMinutes()}:${('0' + d.getUTCSeconds()).slice(-2)}`
 }
 
 const sendToSlack = weekAgo => stats => {
