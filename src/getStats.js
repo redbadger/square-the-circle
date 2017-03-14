@@ -37,7 +37,7 @@ const getCodeDeploymentCount = builds => (
 );
 
 const failedBuilds = builds => (
-  builds.filter(build => build.status === 'failed')
+  builds.filter(({ status }) => status === 'failed' || status === 'canceled')
 );
 
 const totalBuildTime = builds => (
@@ -47,7 +47,7 @@ const totalBuildTime = builds => (
 const isSuccessfulDeployment = build => (
   build.build_parameters &&
   build.build_parameters.PRODUCTION &&
-  build.status !== 'failed'
+  build.status !== 'failed' && build.status !== 'canceled'
 );
 
 module.exports = (fetchBatch, fromDate) => (
